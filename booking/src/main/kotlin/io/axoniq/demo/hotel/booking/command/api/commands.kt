@@ -27,11 +27,12 @@ data class RegisterAccountCommand(
 )
 
 // Room
-data class AddRoomCommand(@TargetAggregateIdentifier val roomNumber: Int, val roomDescription: String)
+data class AddRoomCommand(@TargetAggregateIdentifier val roomNumber: Int, val roomId: UUID, val roomDescription: String)
 data class BookRoomCommand(@TargetAggregateIdentifier val roomNumber: Int, val roomBooking: RoomBooking)
 data class MarkRoomAsPreparedCommand(@TargetAggregateIdentifier val roomNumber: Int, val roomBookingId: UUID)
 data class CheckInCommand(@TargetAggregateIdentifier val roomNumber: Int, val roomBookingId: UUID)
 data class CheckOutCommand(@TargetAggregateIdentifier val roomNumber: Int, val roomBookingId: UUID)
+data class ChangeRoomStatusCommand(@TargetAggregateIdentifier val roomNumber: Int, val roomStatus: RoomStatus)
 
 // Payment
 data class PayCommand(val paymentId: UUID, @TargetAggregateIdentifier val accountId: UUID, val totalAmount: BigDecimal)

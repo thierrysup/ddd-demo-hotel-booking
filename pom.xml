@@ -40,7 +40,7 @@
     <properties>
         <java.version>11</java.version>
         <axon.version>4.6.1</axon.version>
-        <kotlin.version>1.7.20</kotlin.version>
+        <kotlin.version>1.5.31</kotlin.version>
         <swagger.version>3.0.0</swagger.version>
         <frontend-maven-plugin.version>1.12.1</frontend-maven-plugin.version>
         <frontend-maven-plugin.nodeVersion>v14.16.1</frontend-maven-plugin.nodeVersion>
@@ -98,6 +98,17 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>4.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-rsocket</artifactId>
         </dependency>
@@ -122,16 +133,21 @@
             <artifactId>postgresql</artifactId>
         </dependency>
         <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
             <version>${h2.version}</version>
         </dependency>
-        <dependency>
+      <!--  <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
             <version>${flyway.version}</version>
-        </dependency>
+        </dependency>-->
         <!-- Kotlin -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

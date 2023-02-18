@@ -73,7 +73,7 @@ public class RoomCommandController {
     @PostMapping(path = "/rooms")
     public Mono<Integer> addRoom(@RequestBody RoomRequestData roomRequestData) {
         return Mono.when(subscribeToRoomUpdates(roomRequestData.getRoomNumber()))
-                   .and(reactorCommandGateway.send(new AddRoomCommand(roomRequestData.getRoomNumber(),
+                   .and(reactorCommandGateway.send(new AddRoomCommand(roomRequestData.getRoomNumber(), UUID.randomUUID(),
                                                                       roomRequestData.getDescription())))
                    .then(Mono.just(roomRequestData.getRoomNumber()));
     }

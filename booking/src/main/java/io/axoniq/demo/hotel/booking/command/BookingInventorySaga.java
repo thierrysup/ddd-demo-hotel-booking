@@ -19,12 +19,18 @@ import io.axoniq.demo.hotel.booking.command.api.AddRoomCommand;
 import io.axoniq.demo.hotel.booking.command.api.RoomAddedEvent;
 import io.axoniq.demo.hotel.inventory.command.api.MarkRoomAsAddedToBookingSystemCommand;
 import io.axoniq.demo.hotel.inventory.command.api.RoomAddedToInventoryEvent;
+import lombok.extern.slf4j.Slf4j;
+import org.axonframework.commandhandling.CommandCallback;
+import org.axonframework.commandhandling.CommandExecutionException;
+import org.axonframework.commandhandling.CommandMessage;
+import org.axonframework.commandhandling.CommandResultMessage;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.modelling.saga.EndSaga;
 import org.axonframework.modelling.saga.SagaEventHandler;
 import org.axonframework.modelling.saga.StartSaga;
 import org.axonframework.spring.stereotype.Saga;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +38,7 @@ import java.util.UUID;
 
 @Component
 @Saga
+@Slf4j
 @ProcessingGroup("BookingInventorySaga")
 public class BookingInventorySaga {
 
@@ -43,12 +50,18 @@ public class BookingInventorySaga {
     @SagaEventHandler(associationProperty = "roomNumber")
     public void on(RoomAddedToInventoryEvent event) {
         this.inventoryRoomId = event.getRoomId();
-        commandGateway.send(new AddRoomCommand(event.getRoomNumber(), event.getRoomDescription()));
+        log.info("onRoomAddedToInventory  id: {} &  event: {}", event, inventoryRoomId);
+        commandGateway.send(new AddRoomCommand(event.getRoomNumber(), event.getRoomId(), event.getRoomDescription()));
+
     }
 
     @EndSaga
     @SagaEventHandler(associationProperty = "roomNumber")
     public void on(RoomAddedEvent event) {
-        commandGateway.send(new MarkRoomAsAddedToBookingSystemCommand(this.inventoryRoomId));
+        log.info("RoomAddedEvent from booking side  id: {} &  event: {}", this.inventoryRoomId, event);
+
+        commandGateway.send(new MarkRoomAsAddedToBookingSystemCommand(event.getRoomId()), (commandMessage, commandResultMessage) -> {
+            log.error("Error is result: {}", commandResultMessage.exceptionResult().getCause());
+             });
     }
 }

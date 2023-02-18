@@ -15,16 +15,14 @@
 
 package io.axoniq.demo.hotel.booking.query;
 
-import io.axoniq.demo.hotel.booking.command.api.RoomAddedEvent;
-import io.axoniq.demo.hotel.booking.command.api.RoomBookedEvent;
-import io.axoniq.demo.hotel.booking.command.api.RoomBookingRejectedEvent;
-import io.axoniq.demo.hotel.booking.command.api.RoomCheckedOutEvent;
+import io.axoniq.demo.hotel.booking.command.api.*;
 import io.axoniq.demo.hotel.booking.query.api.BookingData;
 import io.axoniq.demo.hotel.booking.query.api.FailedBookingData;
 import io.axoniq.demo.hotel.booking.query.api.FindRoomAvailability;
 import io.axoniq.demo.hotel.booking.query.api.FindRoomAvailabilityForAccount;
 import io.axoniq.demo.hotel.booking.query.api.RoomAvailabilityResponseData;
 import io.axoniq.demo.hotel.booking.query.api.RoomStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
@@ -37,6 +35,7 @@ import java.util.stream.Collectors;
 
 @Component
 @ProcessingGroup("room-availability")
+@Slf4j
 class RoomAvailabilityHandler {
 
     private final RoomAvailabilityEntityRepository roomAvailabilityEntityRepository;
@@ -130,6 +129,19 @@ class RoomAvailabilityHandler {
         queryUpdateEmitter.emit(FindRoomAvailability.class,
                                 query -> query.getRoomId() == event.getRoomNumber(),
                                 convert(entity, null));
+    }
+
+    @EventHandler
+    void on(RoomStatusChangedEvent event) {
+        RoomAvailabilityEntity entity = this.roomAvailabilityEntityRepository.getById(event.getRoomNumber());
+        log.info("RoomAvailabilityEntity {}", event);
+        entity.setRoomStatus(RoomStatus.TAKEN);
+        this.roomAvailabilityEntityRepository.save(entity);
+
+        /* sending it to subscription queries of type FindRoomAvailability, but only if room id matches. */
+        queryUpdateEmitter.emit(FindRoomAvailability.class,
+                query -> query.getRoomId() == event.getRoomNumber(),
+                convert(entity, null));
     }
 
     @QueryHandler

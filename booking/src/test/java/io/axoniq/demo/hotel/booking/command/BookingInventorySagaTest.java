@@ -41,7 +41,7 @@ class BookingInventorySagaTest {
     @Test
     void roomAddedToInventoryEventTest() {
         RoomAddedToInventoryEvent roomAddedToInventoryEvent = new RoomAddedToInventoryEvent(roomId, TestFactoryKt.ROOM_NUMBER, TestFactoryKt.ROOM_DESCRIPTION);
-        AddRoomCommand addRoomCommand = new AddRoomCommand(ROOM_NUMBER, TestFactoryKt.ROOM_DESCRIPTION);
+        AddRoomCommand addRoomCommand = new AddRoomCommand(ROOM_NUMBER, UUID.randomUUID(), TestFactoryKt.ROOM_DESCRIPTION);
 
         testFixture.givenNoPriorActivity()
                    .whenAggregate(roomId.toString())
@@ -53,7 +53,7 @@ class BookingInventorySagaTest {
     @Test
     void roomAddedEventTest() {
         RoomAddedToInventoryEvent roomAddedToInventoryEvent = new RoomAddedToInventoryEvent(roomId, TestFactoryKt.ROOM_NUMBER, TestFactoryKt.ROOM_DESCRIPTION);
-        RoomAddedEvent roomAddedEvent = new RoomAddedEvent(TestFactoryKt.ROOM_NUMBER, TestFactoryKt.ROOM_DESCRIPTION);
+        RoomAddedEvent roomAddedEvent = new RoomAddedEvent(TestFactoryKt.ROOM_NUMBER, UUID.randomUUID(), TestFactoryKt.ROOM_DESCRIPTION);
         MarkRoomAsAddedToBookingSystemCommand markRoomAsAddedToBookingSystemCommand = new MarkRoomAsAddedToBookingSystemCommand(roomId);
 
         testFixture.givenAggregate(roomId.toString())

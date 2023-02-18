@@ -175,7 +175,7 @@ public class GenerateEventsForDemoTest {
     }
 
     private void checkAddRoomCommand(List<AddRoomCommand> addRoomCommandsList, int roomNumber, String roomDescription){
-        assertTrue(addRoomCommandsList.contains(new AddRoomCommand(roomNumber, roomDescription)));
+        assertTrue(addRoomCommandsList.contains(new AddRoomCommand(roomNumber, UUID.randomUUID(), roomDescription)));
     }
 
     private void checkRegisterAccountCommands(List<RegisterAccountCommand> registerAccountCommandList){

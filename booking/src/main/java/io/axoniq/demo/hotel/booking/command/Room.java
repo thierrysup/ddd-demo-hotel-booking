@@ -15,19 +15,7 @@
 
 package io.axoniq.demo.hotel.booking.command;
 
-import io.axoniq.demo.hotel.booking.command.api.AddRoomCommand;
-import io.axoniq.demo.hotel.booking.command.api.BookRoomCommand;
-import io.axoniq.demo.hotel.booking.command.api.CheckInCommand;
-import io.axoniq.demo.hotel.booking.command.api.CheckOutCommand;
-import io.axoniq.demo.hotel.booking.command.api.MarkRoomAsPreparedCommand;
-import io.axoniq.demo.hotel.booking.command.api.RoomAddedEvent;
-import io.axoniq.demo.hotel.booking.command.api.RoomBookedEvent;
-import io.axoniq.demo.hotel.booking.command.api.RoomBooking;
-import io.axoniq.demo.hotel.booking.command.api.RoomBookingRejectedEvent;
-import io.axoniq.demo.hotel.booking.command.api.RoomCheckedInEvent;
-import io.axoniq.demo.hotel.booking.command.api.RoomCheckedOutEvent;
-import io.axoniq.demo.hotel.booking.command.api.RoomPreparedEvent;
-import io.axoniq.demo.hotel.booking.command.api.RoomStatus;
+import io.axoniq.demo.hotel.booking.command.api.*;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -56,7 +44,7 @@ class Room {
 
     @CommandHandler
     Room(AddRoomCommand command) {
-        apply(new RoomAddedEvent(command.getRoomNumber(), command.getRoomDescription()));
+        apply(new RoomAddedEvent(command.getRoomNumber(), command.getRoomId(), command.getRoomDescription()));
     }
 
     //TODO Check Account invariant !!!!
@@ -92,6 +80,11 @@ class Room {
     }
 
     @CommandHandler
+    void handle(ChangeRoomStatusCommand command) {
+        apply(new RoomStatusChangedEvent(command.getRoomNumber(), command.getRoomStatus()));
+    }
+
+    @CommandHandler
     void handle(CheckOutCommand command) {
         Assert.isTrue(roomIsCheckedIn(), String.format("Room %s is not checked-in", roomNumber));
         apply(new RoomCheckedOutEvent(command.getRoomNumber(), command.getRoomBookingId()));
@@ -114,6 +107,11 @@ class Room {
     @EventSourcingHandler
     void on(RoomPreparedEvent event) {
         this.roomStatus = RoomStatus.PREPARED;
+    }
+
+    @EventSourcingHandler
+    void on(RoomStatusChangedEvent event) {
+        this.roomStatus = event.getRoomStatus();
     }
 
     @EventSourcingHandler

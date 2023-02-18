@@ -24,19 +24,19 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
-@Controller
-public class AccountCommandRSocketController {
-
-    private final ReactorCommandGateway reactorCommandGateway;
-
-    public AccountCommandRSocketController(ReactorCommandGateway reactorCommandGateway) {
-        this.reactorCommandGateway = reactorCommandGateway;
-    }
-
-    @MessageMapping("accounts.register")
-    public Mono<UUID> register(AccountRequestData accountRequestData) {
-        return reactorCommandGateway.send(new RegisterAccountCommand(UUID.randomUUID(),
-                                                                     accountRequestData.getUserName(),
-                                                                     accountRequestData.getPassword()));
-    }
-}
+//@Controller
+//public class AccountCommandRSocketController {
+//
+//    private final ReactorCommandGateway reactorCommandGateway;
+//
+//    public AccountCommandRSocketController(ReactorCommandGateway reactorCommandGateway) {
+//        this.reactorCommandGateway = reactorCommandGateway;
+//    }
+//
+//    @MessageMapping("accounts.register")
+//    public Mono<UUID> register(AccountRequestData accountRequestData) {
+//        return reactorCommandGateway.send(new RegisterAccountCommand(UUID.randomUUID(),
+//                                                                     accountRequestData.getUserName(),
+//                                                                     accountRequestData.getPassword()));
+//    }
+//}

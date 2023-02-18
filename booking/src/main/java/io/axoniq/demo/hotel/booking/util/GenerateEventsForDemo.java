@@ -160,7 +160,7 @@ public class GenerateEventsForDemo {
     }
 
     private void addRoom(int roomNumber, String roomDescription) {
-        commandGateway.send(new AddRoomCommand(roomNumber,
+        commandGateway.send(new AddRoomCommand(roomNumber,UUID.randomUUID(),
                                                roomDescription));
     }
 }
